@@ -1,4 +1,4 @@
-import type Anthropic from "@anthropic-ai/sdk";
+export {};
 
 // Fake in-memory data so the agent has something real to act on without external APIs.
 const CUSTOMERS: Record<string, { name: string; plan: string; openTickets: number }> = {
@@ -12,7 +12,7 @@ const KB_ARTICLES = [
   { id: "kb_3", title: "API rate limits", body: "Free plan: 100 req/day. Enterprise: 100k req/day." },
 ];
 
-export const toolDefinitions: Anthropic.Tool[] = [
+const toolDefinitions: any[] = [
   {
     name: "lookup_customer",
     description: "Look up a customer's plan and open ticket count by customer ID.",
@@ -69,3 +69,5 @@ export function runTool(name: string, input: Record<string, unknown>): string {
       return `Unknown tool: ${name}`;
   }
 }
+
+module.exports = { toolDefinitions, runTool };

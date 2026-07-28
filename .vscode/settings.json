@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^/usr/local/opt/node@20/bin/node \\./node_modules/\\.bin/tsc && /usr/local/opt/node@20/bin/node dist/agent\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
