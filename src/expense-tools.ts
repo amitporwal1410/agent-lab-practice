@@ -32,6 +32,15 @@ const toolDefinitions: any[] = [
       required: ["item", "amount", "reason"],
     },
   },
+  {
+    name: "list_open_tickets",
+    description: "List currently open expense-review tickets awaiting action.",
+    input_schema: {
+      type: "object",
+      properties: {},
+      required: [],
+    },
+  },
 ];
 
 function runTool(name: string, input: Record<string, any>): string {
@@ -42,6 +51,12 @@ function runTool(name: string, input: Record<string, any>): string {
     }
     case "flag_issue": {
       return `FLAGGED: "${input.item}" ($${input.amount}) — ${input.reason}`;
+    }
+    case "list_open_tickets": {
+      return JSON.stringify([
+        { id: "EXP-1042", title: "Missing receipt for lodging over $250/night", status: "open" },
+        { id: "EXP-1057", title: "Client entertainment missing attendee names", status: "open" },
+      ]);
     }
     default:
       return `Unknown tool: ${name}`;
