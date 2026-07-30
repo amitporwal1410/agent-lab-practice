@@ -2,11 +2,7 @@
   "name": "agent-lab-practice",
   "private": true,
   "scripts": {
-    "agent": "node dist/agent.js",
-    "expense": "node dist/expense-agent.js",
-    "build": "tsc",
-    "dev": "tsc && node dist/agent.js",
-    "dev:expense": "tsc && node dist/expense-agent.js"
+    "build": "tsc"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
