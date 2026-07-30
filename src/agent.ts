@@ -5,13 +5,16 @@ const { toolDefinitions, runTool } = require("./tools");
 export {};
 
 type MessageParam = { role: "user" | "assistant"; content: any };
+type ToolCallTrace = { name: string; input: Record<string, unknown>; result: string };
+type AgentRun = { trace: ToolCallTrace[]; finalText: string };
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM_PROMPT = `You are a helpful agent. Use the available tools to complete the user's task. Be concise.`;
 
-async function runAgent(userTask: string) {
+async function runAgent(userTask: string, log = true): Promise<AgentRun> {
   const messages: MessageParam[] = [{ role: "user", content: userTask }];
+  const trace: ToolCallTrace[] = [];
 
   while (true) {
     const response = await anthropic.messages.create({
@@ -29,16 +32,17 @@ async function runAgent(userTask: string) {
         .filter((block: any) => block.type === "text")
         .map((block: any) => block.text)
         .join("\n");
-      console.log("\n=== Agent response ===\n" + finalText);
-      return;
+      if (log) console.log("\n=== Agent response ===\n" + finalText);
+      return { trace, finalText };
     }
 
     const toolResults: any[] = [];
     for (const block of response.content) {
       if (block.type === "tool_use") {
-        console.log(`\n[tool call] ${block.name}(${JSON.stringify(block.input)})`);
+        if (log) console.log(`\n[tool call] ${block.name}(${JSON.stringify(block.input)})`);
         const result = runTool(block.name, block.input as Record<string, unknown>);
-        console.log(`[tool result] ${result}`);
+        if (log) console.log(`[tool result] ${result}`);
+        trace.push({ name: block.name, input: block.input as Record<string, unknown>, result });
         toolResults.push({ type: "tool_result", tool_use_id: block.id, content: result });
       }
     }
@@ -46,6 +50,10 @@ async function runAgent(userTask: string) {
   }
 }
 
-const task = process.argv.slice(2).join(" ") || "What time is it right now?";
-console.log(`Task: ${task}`);
-runAgent(task);
+module.exports = { runAgent };
+
+if (require.main === module) {
+  const task = process.argv.slice(2).join(" ") || "What time is it right now?";
+  console.log(`Task: ${task}`);
+  runAgent(task);
+}

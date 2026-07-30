@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc",
     "agent": "node dist/agent.js",
-    "dev": "tsc && node dist/agent.js"
+    "dev": "tsc && node dist/agent.js",
+    "evals": "tsc && node dist/evals.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
